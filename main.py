@@ -1,6 +1,5 @@
-import config
 import requests
-from db import add_new_car, get_last_row
+from db import add_new_car
 from bs4 import BeautifulSoup
 from notifiers import get_notifier
 
@@ -24,7 +23,6 @@ if response.status_code == 200:
 
     for car in content_bars:
         try:
-            # Title
             title = car.find('div', class_='head-ticket')
             title = title.text.strip() if title else 'Не вказано'
 
@@ -54,17 +52,13 @@ if response.status_code == 200:
             link_tag = car.find('a', class_='address')
             link = link_tag.get('href') if link_tag else 'Не вказано'
 
-            # print(f"{title} | {price_usd} | {mileage} | {location} | {fuel_type} | {transmission} | {plate} | "
-            #       f"{vin_code} | {link}")
-
-            # add_new_car(title, price_usd, mileage, location, fuel_type, transmission, plate, vin_code, link)
+            add_new_car(title, price_usd, mileage, location, fuel_type, transmission, plate, vin_code, link)
 
         except AttributeError as e:
             print(f'Error: {e}')
 else:
     print(f'[x] {response.status_code}')
 
-print(get_last_row())
 
 telegram = get_notifier('telegram')
 # telegram.notify(token=f'{config.BOT_TOKEN}', chat_id=f'{config.CHAT_ID}', message='hi')
